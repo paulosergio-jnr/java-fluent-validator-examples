@@ -1,14 +1,11 @@
 package br.com.example.fluentvalidatorexamples.domain;
 
-import br.com.example.fluentvalidatorexamples.enums.Country;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class Address {
-
-  private String zipcode;
 
   private String addressLine1;
 
@@ -18,6 +15,8 @@ public class Address {
 
   private String state;
 
-  private Country country;
+  private String country;
+
+  private String zipcode;
 
 }

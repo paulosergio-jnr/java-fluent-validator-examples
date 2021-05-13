@@ -20,14 +20,14 @@ public enum Country {
 
   static {
     for (final Country country : Country.values()) {
-      ENTRIES.put(country.value, country);
+      ENTRIES.put(country.code, country);
     }
   }
 
-  private final String value;
+  private final String code;
 
-  Country(final String value) {
-    this.value = value;
+  Country(final String code) {
+    this.code = code;
   }
 
   public static Country entryOf(final String country) {
