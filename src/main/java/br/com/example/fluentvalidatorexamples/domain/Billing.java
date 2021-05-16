@@ -1,8 +1,8 @@
 package br.com.example.fluentvalidatorexamples.domain;
 
-import br.com.example.fluentvalidatorexamples.enums.BillingStatus;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,13 +11,14 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@ToString
 public class Billing {
 
   private UUID id;
 
-  private Receiver receiver;
-
   private Payer payer;
+
+  private Receiver receiver;
 
   private BigDecimal balance;
 
@@ -32,7 +33,5 @@ public class Billing {
   private BigDecimal fineAmount;
 
   private List<String> additionalInfo;
-
-  private BillingStatus billingStatus;
 
 }
