@@ -15,6 +15,8 @@ import static java.util.function.Predicate.not;
 
 public class AddressValidator extends AbstractValidator<Address> {
 
+  private final String prefix;
+
   private static final Set<String> ACCEPTED_COUNTRIES;
 
   static {
@@ -26,6 +28,7 @@ public class AddressValidator extends AbstractValidator<Address> {
 
   @Override
   public void rules() {
+
     /**
      * rules for Address:
      * - address line 1 is mandatory
@@ -36,92 +39,90 @@ public class AddressValidator extends AbstractValidator<Address> {
      * - only US, Canada and Mexico countries are allowed
      * - zip code is mandatory
      * - zip code must be numbers-only
-     * - zip code must be valid. Use an external service to validate it
      */
 
-    ruleFor("addressLine1", Address::getAddressLine1)
+    ruleFor(prefix + "addressLine1", Address::getAddressLine1)
       /**
        * address line 1 must not be null or empty string
        */
       .must(not(stringEmptyOrNull()))
-      .withCode("")
-      .withMessage("");
+        .withCode("401")
+        .withMessage("address line 1 not provided");
 
-    ruleFor("addressLine2", Address::getAddressLine2)
+    ruleFor(prefix + "addressLine2", Address::getAddressLine2)
       /**
        * address line 2 must not be empty string whenever it is not null
        */
       .must(not(stringEmptyOrNull()))
       .when(not(nullValue()))
-      .withCode("")
-      .withMessage("");
+        .withCode("402")
+        .withMessage("address line 2 not provided");
 
-    ruleFor("city", Address::getCity)
+    ruleFor(prefix + "city", Address::getCity)
       /**
        * city must not be null or empty string
        */
       .must(not(stringEmptyOrNull()))
-      .withCode("")
-      .withMessage("");
+        .withCode("403")
+        .withMessage("city not provided");
 
-    ruleFor("state", Address::getState)
+    ruleFor(prefix + "state", Address::getState)
       /**
        * state must not be null or empty string
        */
       .must(not(stringEmptyOrNull()))
-      .withCode("")
-      .withMessage("");
+        .withCode("404")
+        .withMessage("state not provided");
 
-    ruleFor("country", Address::getCountry)
+    ruleFor(prefix + "country", Address::getCountry)
       /**
        * country must not be null or empty string
        */
       .must(not(stringEmptyOrNull()))
-      .withCode("")
-      .withMessage("")
+        .withCode("405")
+        .withMessage("country not provided")
 
       /**
        * country must match any of the Countries in Country Enum
        */
       .must(isTrue(Country::exists))
-      .withCode("")
-      .withMessage("")
-      .critical()
+        .withCode("406")
+        .withMessage("invalid country. Please, use one of the following: " + Country.getAllCountries())
+        .critical()
 
       /**
        * only US, Canada and Mexico countries are allowed
        * a list with the accepted countries is provided for this validation
        */
       .must(ACCEPTED_COUNTRIES::contains)
-      .withCode("")
-      .withMessage("");
+        .withCode("407")
+        .withMessage("only US, Canada and Mexico countries are allowed for this transaction");
 
-    ruleFor("zipcode", Address::getZipcode)
+    ruleFor(prefix + "zipcode", Address::getZipcode)
       /**
        * zipcode must not be null or empty string
        */
       .must(not(stringEmptyOrNull()))
-      .withCode("")
-      .withMessage("")
-      .critical()
+      .withCode("408")
+        .withMessage("zip code not provided")
+        .critical()
 
       /**
        * zipcode must be number-only
        */
       .must(isNumber())
-      .withCode("")
-      .withMessage("")
-      .critical();
+        .withCode("409")
+        .withMessage("incorrect zip code format. Only numbers are accepted")
+        .critical();
 
-    /**
-     * zipcode must be validated using an external API
-     * TODO
-     */
-//      .must(isNumber())
-//      .withCode("")
-//      .withMessage("")
-//      .critical()
+  }
 
+  public AddressValidator() {
+    prefix = "";
+  }
+
+  public AddressValidator(final String prefix) {
+    this.prefix = prefix;
   }
 
 }

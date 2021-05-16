@@ -4,12 +4,15 @@ import br.com.example.fluentvalidatorexamples.domain.Billing;
 import br.com.fluentvalidator.AbstractValidator;
 
 import java.math.BigDecimal;
+import java.util.function.Function;
 
 import static br.com.fluentvalidator.predicate.ComparablePredicate.greaterThanOrEqual;
 import static br.com.fluentvalidator.predicate.ComparablePredicate.lessThan;
 import static br.com.fluentvalidator.predicate.LogicalPredicate.isTrue;
 
 class FineValidator extends AbstractValidator<Billing> {
+
+  private static final BigDecimal MINIMUM_FINE_AMOUNT = new BigDecimal("0.01");
 
   @Override
   public void rules() {
@@ -22,22 +25,22 @@ class FineValidator extends AbstractValidator<Billing> {
       /**
        * the minimum value for fine amount is $0.01
        */
-      .must(greaterThanOrEqual(Billing::getFineAmount, new BigDecimal("0.01")))
+      .must(greaterThanOrEqual(Billing::getFineAmount, MINIMUM_FINE_AMOUNT))
       .when(isTrue(Billing::getApplyFineForPastPayment))
-        .withCode("")
-        .withFieldName("")
-        .withMessage("")
-        .withAttempedValue(Billing::getFineAmount);
+        .withCode("201")
+        .withFieldName("fineAmount")
+        .withMessage("the minimum value for fine amount is $0.01")
+        .withAttempedValue(Billing::getFineAmount)
 
       /**
-       * the maximum value for fine can not be greather or equal the billing balance
+       * the maximum value for fine can not be greater or equal the billing balance
        */
-//      .must(lessThan(Billing::getFineAmount, Billing::getBalance))
-//      .when(isTrue(Billing::getApplyFineForPastPayment))
-//        .withCode("")
-//        .withFieldName("")
-//        .withMessage("")
-//        .withAttempedValue(Billing::getFineAmount);
+      .must(lessThan(Billing::getFineAmount, (Function<Billing, BigDecimal>) Billing::getBalance))
+      .when(isTrue(Billing::getApplyFineForPastPayment))
+        .withCode("202")
+        .withFieldName("fineAmount")
+        .withMessage("the maximum value for fine can not be greater or equal the billing balance")
+        .withAttempedValue(Billing::getFineAmount);
 
   }
 

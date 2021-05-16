@@ -2,6 +2,7 @@ package br.com.example.fluentvalidatorexamples.validator;
 
 import br.com.example.fluentvalidatorexamples.domain.Billing;
 import br.com.fluentvalidator.AbstractValidator;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,7 +15,8 @@ import static br.com.fluentvalidator.predicate.LocalDatePredicate.*;
 import static br.com.fluentvalidator.predicate.LogicalPredicate.*;
 import static br.com.fluentvalidator.predicate.ObjectPredicate.nullValue;
 
-public class InsertBillingValitador extends AbstractValidator<Billing> {
+@Component
+public class BillingValitador extends AbstractValidator<Billing> {
 
   private static final BigDecimal MAX_BALANCE = new BigDecimal("999999.99");
   private static final BigDecimal MIN_BALANCE = new BigDecimal("1.00");
@@ -33,9 +35,9 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        * this field is mandatory, and must not be null
        */
       .must(not(nullValue()))
-        .withCode("")
-        .withFieldName("")
-        .withMessage("")
+        .withCode("101")
+        .withFieldName("balance")
+        .withMessage("balance must not be null")
         .withAttempedValue(Billing::getBalance)
 
       /**
@@ -44,9 +46,9 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        */
       .must(greaterThanOrEqual(MIN_BALANCE))
       .when(not(nullValue()))
-        .withCode("")
-        .withFieldName("")
-        .withMessage("")
+        .withCode("102")
+        .withFieldName("balance")
+        .withMessage("the minimum value for a billing is $1")
         .withAttempedValue(Billing::getBalance)
 
       /**
@@ -55,9 +57,9 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        */
       .must(lessThanOrEqual(MAX_BALANCE))
       .when(not(nullValue()))
-        .withCode("")
-        .withFieldName("")
-        .withMessage("")
+        .withCode("103")
+        .withFieldName("balance")
+        .withMessage("the maximum value for a billing is $999,999.99")
         .withAttempedValue(Billing::getBalance);
 
     /**
@@ -73,9 +75,9 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        * for that, we will simplify using critical() parameter
        */
       .must(not(nullValue()))
-        .withCode("")
-        .withFieldName("")
-        .withMessage("")
+        .withCode("104")
+        .withFieldName("dueDate")
+        .withMessage("due date not provided")
         .withAttempedValue(Billing::getDueDate)
         .critical()
 
@@ -83,18 +85,18 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        * due date must be equal of after today
        */
       .must(localDateAfterOrEqualToday())
-        .withCode("")
-        .withFieldName("")
-        .withMessage("")
+        .withCode("105")
+        .withFieldName("dueDate")
+        .withMessage("due date must be equal of after today")
         .withAttempedValue(Billing::getDueDate)
 
       /**
        * due date must not the set to more than one year further the current date
        */
       .must(localDateBeforeOrEqual(LocalDate.now().plusYears(1)))
-        .withCode("")
-        .withFieldName("")
-        .withMessage("")
+        .withCode("106")
+        .withFieldName("dueDate")
+        .withMessage("due date must not the set to more than one year further the current date")
         .withAttempedValue(Billing::getDueDate);
 
     /**
@@ -109,9 +111,9 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        * this field is mandatory, and must not be null
        */
       .must(not(nullValue(Billing::getAcceptPastPayment)))
-        .withCode("")
-        .withFieldName("")
-        .withMessage("")
+        .withCode("107")
+        .withFieldName("acceptPastPayment")
+        .withMessage("accept past payment not provided")
         .withAttempedValue(Billing::getAcceptPastPayment)
         .critical()
 
@@ -120,9 +122,9 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        */
       .must(not(nullValue(Billing::getExpirationDate)))
       .when(isTrue(Billing::getAcceptPastPayment))
-        .withCode("")
-        .withFieldName("")
-        .withMessage("")
+        .withCode("108")
+        .withFieldName("expirationDate")
+        .withMessage("expiration date must be provided whenever past payment is accepted")
         .withAttempedValue(Billing::getExpirationDate)
         .critical()
 
@@ -131,20 +133,9 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        */
       .must(nullValue(Billing::getExpirationDate))
       .when(isFalse(Billing::getAcceptPastPayment))
-        .withCode("")
-        .withFieldName("")
-        .withMessage("")
-        .withAttempedValue(Billing::getExpirationDate)
-        .critical()
-
-      /**
-       * expiration date must not be provided whenever past payment is not accepted
-       */
-      .must(nullValue(Billing::getExpirationDate))
-      .when(isFalse(Billing::getAcceptPastPayment))
-        .withCode("")
-        .withFieldName("")
-        .withMessage("")
+        .withCode("109")
+        .withFieldName("expirationDate")
+        .withMessage("expiration date must not be provided whenever past payment is not accepted")
         .withAttempedValue(Billing::getExpirationDate)
         .critical()
 
@@ -154,9 +145,9 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        */
       .must(localDateAfter(Billing::getExpirationDate, Billing::getDueDate))
       .when(isTrue(Billing::getAcceptPastPayment))
-        .withCode("")
-        .withFieldName("")
-        .withMessage("")
+        .withCode("110")
+        .withFieldName("expirationDate")
+        .withMessage("expiration date must be further due date")
         .withAttempedValue(Billing::getExpirationDate)
 
       /**
@@ -165,16 +156,24 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        */
       .must(localDateBeforeOrEqual(Billing::getExpirationDate, plusMonths(Billing::getDueDate, 6)))
       .when(isTrue(Billing::getAcceptPastPayment))
-        .withCode("")
-        .withFieldName("")
-        .withMessage("")
+        .withCode("111")
+        .withFieldName("expirationDate")
+        .withMessage("expiration date must be set to more than 6 months past due date")
         .withAttempedValue(Billing::getExpirationDate);
 
     /**
-     * whenever past payment is accepted, fine rules can be applied
+     * rules for fine:
+     * - apply fine flag must not be null
+     * - whenever fine is applicable, fine rules can be applied
      * for this purpose, a exclusive validator for fine rules is created
      */
     ruleFor(billing -> billing)
+      .must(not(nullValue(Billing::getApplyFineForPastPayment)))
+        .withCode("112")
+        .withFieldName("applyFineForPastPayment")
+        .withMessage("flag 'apply fine for past payment' not provided")
+        .withAttempedValue(Billing::getApplyFineForPastPayment)
+
       .whenever(isTrue(Billing::getAcceptPastPayment))
       .withValidator(new FineValidator());
 
@@ -188,9 +187,9 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        * payer must not be null
        */
       .must(not(nullValue()))
-        .withCode("")
-        .withFieldName("")
-        .withMessage("")
+        .withCode("113")
+        .withFieldName("payer")
+        .withMessage("payer not provided")
         .withAttempedValue(Billing::getPayer)
 
       /**
@@ -209,9 +208,9 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        * receiver must not be null
        */
       .must(not(nullValue()))
-        .withCode("")
-        .withFieldName("")
-        .withMessage("")
+        .withCode("114")
+        .withFieldName("receiver")
+        .withMessage("receiver not provided")
         .withAttempedValue(Billing::getPayer)
 
       /**
@@ -232,9 +231,9 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        */
       .must(not(empty()))
       .when(not(nullValue()))
-        .withCode("")
-        .withFieldName("")
-        .withMessage("")
+        .withCode("115")
+        .withFieldName("additionalInfo")
+        .withMessage("additional info list must not be empty")
         .withAttempedValue(Billing::getAdditionalInfo);
 
     /**
@@ -247,7 +246,7 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
   }
 
   /**
-   * Function create to dynamically add months to a field
+   * Function created to dynamically add months to a field
    *
    * @param localDateFunction
    * @return
