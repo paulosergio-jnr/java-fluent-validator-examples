@@ -14,9 +14,10 @@ public class AdditionalInfoValidator extends AbstractValidator<String> {
      * rules for additionalInfo:
      * - an item can not be null or string empty
      */
-    ruleFor("additionalInfo", additionalInfo -> additionalInfo)
+    ruleFor(additionalInfo -> additionalInfo)
       .must(not(stringEmptyOrNull()))
         .withCode("601")
+      .withFieldName(fn -> "additionalInfo[" + getCounter() + "]")
         .withMessage("additional info cannot be empty or null");
 
   }
