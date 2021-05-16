@@ -2,7 +2,6 @@ package br.com.example.fluentvalidatorexamples.validator;
 
 import br.com.example.fluentvalidatorexamples.domain.Billing;
 import br.com.fluentvalidator.AbstractValidator;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,8 +14,6 @@ import static br.com.fluentvalidator.predicate.LocalDatePredicate.*;
 import static br.com.fluentvalidator.predicate.LogicalPredicate.*;
 import static br.com.fluentvalidator.predicate.ObjectPredicate.nullValue;
 
-
-@Component
 public class InsertBillingValitador extends AbstractValidator<Billing> {
 
   private static final BigDecimal MAX_BALANCE = new BigDecimal("999999.99");
@@ -36,10 +33,10 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        * this field is mandatory, and must not be null
        */
       .must(not(nullValue()))
-      .withCode("")
-      .withFieldName("")
-      .withMessage("")
-      .withAttempedValue(Billing::getBalance)
+        .withCode("")
+        .withFieldName("")
+        .withMessage("")
+        .withAttempedValue(Billing::getBalance)
 
       /**
        * the minimum value for a billing is $1
@@ -47,10 +44,10 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        */
       .must(greaterThanOrEqual(MIN_BALANCE))
       .when(not(nullValue()))
-      .withCode("")
-      .withFieldName("")
-      .withMessage("")
-      .withAttempedValue(Billing::getBalance)
+        .withCode("")
+        .withFieldName("")
+        .withMessage("")
+        .withAttempedValue(Billing::getBalance)
 
       /**
        * the maximum value for a billing is $999,999.99
@@ -58,10 +55,10 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        */
       .must(lessThanOrEqual(MAX_BALANCE))
       .when(not(nullValue()))
-      .withCode("")
-      .withFieldName("")
-      .withMessage("")
-      .withAttempedValue(Billing::getBalance);
+        .withCode("")
+        .withFieldName("")
+        .withMessage("")
+        .withAttempedValue(Billing::getBalance);
 
     /**
      * rules for due date:
@@ -76,29 +73,29 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        * for that, we will simplify using critical() parameter
        */
       .must(not(nullValue()))
-      .withCode("")
-      .withFieldName("")
-      .withMessage("")
-      .withAttempedValue(Billing::getDueDate)
-      .critical()
+        .withCode("")
+        .withFieldName("")
+        .withMessage("")
+        .withAttempedValue(Billing::getDueDate)
+        .critical()
 
       /**
        * due date must be equal of after today
        */
       .must(localDateAfterOrEqualToday())
-      .withCode("")
-      .withFieldName("")
-      .withMessage("")
-      .withAttempedValue(Billing::getDueDate)
+        .withCode("")
+        .withFieldName("")
+        .withMessage("")
+        .withAttempedValue(Billing::getDueDate)
 
       /**
        * due date must not the set to more than one year further the current date
        */
       .must(localDateBeforeOrEqual(LocalDate.now().plusYears(1)))
-      .withCode("")
-      .withFieldName("")
-      .withMessage("")
-      .withAttempedValue(Billing::getDueDate);
+        .withCode("")
+        .withFieldName("")
+        .withMessage("")
+        .withAttempedValue(Billing::getDueDate);
 
     /**
      * rules for past payments:
@@ -112,44 +109,44 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        * this field is mandatory, and must not be null
        */
       .must(not(nullValue(Billing::getAcceptPastPayment)))
-      .withCode("")
-      .withFieldName("")
-      .withMessage("")
-      .withAttempedValue(Billing::getAcceptPastPayment)
-      .critical()
+        .withCode("")
+        .withFieldName("")
+        .withMessage("")
+        .withAttempedValue(Billing::getAcceptPastPayment)
+        .critical()
 
       /**
        * expiration date must be provided whenever past payment is accepted
        */
       .must(not(nullValue(Billing::getExpirationDate)))
       .when(isTrue(Billing::getAcceptPastPayment))
-      .withCode("")
-      .withFieldName("")
-      .withMessage("")
-      .withAttempedValue(Billing::getExpirationDate)
-      .critical()
+        .withCode("")
+        .withFieldName("")
+        .withMessage("")
+        .withAttempedValue(Billing::getExpirationDate)
+        .critical()
 
       /**
        * expiration date must not be provided whenever past payment is not accepted
        */
       .must(nullValue(Billing::getExpirationDate))
       .when(isFalse(Billing::getAcceptPastPayment))
-      .withCode("")
-      .withFieldName("")
-      .withMessage("")
-      .withAttempedValue(Billing::getExpirationDate)
-      .critical()
+        .withCode("")
+        .withFieldName("")
+        .withMessage("")
+        .withAttempedValue(Billing::getExpirationDate)
+        .critical()
 
       /**
        * expiration date must not be provided whenever past payment is not accepted
        */
       .must(nullValue(Billing::getExpirationDate))
       .when(isFalse(Billing::getAcceptPastPayment))
-      .withCode("")
-      .withFieldName("")
-      .withMessage("")
-      .withAttempedValue(Billing::getExpirationDate)
-      .critical()
+        .withCode("")
+        .withFieldName("")
+        .withMessage("")
+        .withAttempedValue(Billing::getExpirationDate)
+        .critical()
 
       /**
        * expiration date must be after due date
@@ -157,10 +154,10 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        */
       .must(localDateAfter(Billing::getExpirationDate, Billing::getDueDate))
       .when(isTrue(Billing::getAcceptPastPayment))
-      .withCode("")
-      .withFieldName("")
-      .withMessage("")
-      .withAttempedValue(Billing::getExpirationDate)
+        .withCode("")
+        .withFieldName("")
+        .withMessage("")
+        .withAttempedValue(Billing::getExpirationDate)
 
       /**
        * expiration date must be set to more than 6 months past due date
@@ -168,10 +165,10 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        */
       .must(localDateBeforeOrEqual(Billing::getExpirationDate, plusMonths(Billing::getDueDate, 6)))
       .when(isTrue(Billing::getAcceptPastPayment))
-      .withCode("")
-      .withFieldName("")
-      .withMessage("")
-      .withAttempedValue(Billing::getExpirationDate);
+        .withCode("")
+        .withFieldName("")
+        .withMessage("")
+        .withAttempedValue(Billing::getExpirationDate);
 
     /**
      * whenever past payment is accepted, fine rules can be applied
@@ -191,10 +188,10 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        * payer must not be null
        */
       .must(not(nullValue()))
-      .withCode("")
-      .withFieldName("")
-      .withMessage("")
-      .withAttempedValue(Billing::getPayer)
+        .withCode("")
+        .withFieldName("")
+        .withMessage("")
+        .withAttempedValue(Billing::getPayer)
 
       /**
        * validate payer with proper rules
@@ -212,10 +209,10 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        * receiver must not be null
        */
       .must(not(nullValue()))
-      .withCode("")
-      .withFieldName("")
-      .withMessage("")
-      .withAttempedValue(Billing::getPayer)
+        .withCode("")
+        .withFieldName("")
+        .withMessage("")
+        .withAttempedValue(Billing::getPayer)
 
       /**
        * validate receiver with proper rules
@@ -235,10 +232,10 @@ public class InsertBillingValitador extends AbstractValidator<Billing> {
        */
       .must(not(empty()))
       .when(not(nullValue()))
-      .withCode("")
-      .withFieldName("")
-      .withMessage("")
-      .withAttempedValue(Billing::getAdditionalInfo);
+        .withCode("")
+        .withFieldName("")
+        .withMessage("")
+        .withAttempedValue(Billing::getAdditionalInfo);
 
     /**
      * for each item on additional info list, apply a proper validator

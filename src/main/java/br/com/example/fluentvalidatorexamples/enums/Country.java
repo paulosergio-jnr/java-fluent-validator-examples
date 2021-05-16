@@ -38,4 +38,8 @@ public enum Country {
     return Objects.nonNull(country) && ENTRIES.containsKey(country);
   }
 
+  public static String getAllCountries() {
+    return ENTRIES.keySet().stream().reduce((s, s2) -> s = s + "," + s2).orElse("");
+  }
+
 }
