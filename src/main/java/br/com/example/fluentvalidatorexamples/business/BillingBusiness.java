@@ -68,7 +68,11 @@ public class BillingBusiness {
   }
 
   public void delete(final UUID id) throws BillingNotFoundException {
+    LOGGER.info("deleting billing with id " + id);
+
     billingRepository.delete(id);
+
+    LOGGER.info("billing deleted successfully");
   }
 
 }
