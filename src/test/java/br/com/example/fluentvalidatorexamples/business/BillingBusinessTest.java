@@ -16,9 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static br.com.example.fluentvalidatorexamples.utils.BillingTemplate.createBilling;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -64,6 +62,7 @@ class BillingBusinessTest {
     final Billing returnedBilling = billingBusiness.save(billing);
 
     verify(mockedAppender, times(2)).doAppend(loggingEventCaptor.capture());
+    verify(billingRepository, only()).save(eq(billing));
 
     final List<LoggingEvent> loggingEventList = loggingEventCaptor.getAllValues();
 
@@ -92,6 +91,7 @@ class BillingBusinessTest {
     final BillingValidationException exception = catchThrowableOfType(() -> billingBusiness.save(billing), BillingValidationException.class);
 
     verify(mockedAppender, times(2)).doAppend(loggingEventCaptor.capture());
+    verify(billingRepository, never()).save(eq(billing));
 
     final List<LoggingEvent> loggingEventList = loggingEventCaptor.getAllValues();
 
@@ -116,6 +116,7 @@ class BillingBusinessTest {
     final Billing returnedBilling = billingBusiness.update(billing);
 
     verify(mockedAppender, times(2)).doAppend(loggingEventCaptor.capture());
+    verify(billingRepository, only()).update(eq(billing));
 
     final List<LoggingEvent> loggingEventList = loggingEventCaptor.getAllValues();
 
@@ -144,6 +145,7 @@ class BillingBusinessTest {
     final BillingValidationException exception = catchThrowableOfType(() -> billingBusiness.update(billing), BillingValidationException.class);
 
     verify(mockedAppender, times(2)).doAppend(loggingEventCaptor.capture());
+    verify(billingRepository, never()).update(eq(billing));
 
     final List<LoggingEvent> loggingEventList = loggingEventCaptor.getAllValues();
 
@@ -165,6 +167,7 @@ class BillingBusinessTest {
     final BillingNotFoundException exception = catchThrowableOfType(() -> billingBusiness.update(billing), BillingNotFoundException.class);
 
     verify(mockedAppender, times(2)).doAppend(loggingEventCaptor.capture());
+    verify(billingRepository, only()).update(eq(billing));
 
     final List<LoggingEvent> loggingEventList = loggingEventCaptor.getAllValues();
 
@@ -183,6 +186,7 @@ class BillingBusinessTest {
     billingBusiness.delete(id);
 
     verify(mockedAppender, times(2)).doAppend(loggingEventCaptor.capture());
+    verify(billingRepository, only()).delete(eq(id));
 
     final List<LoggingEvent> loggingEventList = loggingEventCaptor.getAllValues();
 
@@ -199,6 +203,7 @@ class BillingBusinessTest {
     final BillingNotFoundException exception = catchThrowableOfType(() -> billingBusiness.delete(id), BillingNotFoundException.class);
 
     verify(mockedAppender, only()).doAppend(loggingEventCaptor.capture());
+    verify(billingRepository, only()).delete(eq(id));
 
     final List<LoggingEvent> loggingEventList = loggingEventCaptor.getAllValues();
 
@@ -209,5 +214,33 @@ class BillingBusinessTest {
     assertThat(loggingEventList, everyItem(hasProperty("level", equalTo(Level.INFO))));
   }
 
+
+  @Test
+  void Should_ReturnEmptyList_When_FindingAllBillings() {
+    when(billingRepository.findAll()).thenReturn(new HashSet<>());
+
+    final Set<Billing> billings = billingBusiness.findAllBillings();
+
+    verify(billingRepository, only()).findAll();
+
+    assertThat(billings, not(nullValue()));
+    assertThat(billings, is(empty()));
+  }
+
+  @Test
+  void Should_ReturnBilling_When_FindingForExistingBilling() throws BillingNotFoundException {
+    final UUID id = UUID.randomUUID();
+
+    final Billing billing = createBilling();
+
+    when(billingRepository.findById(eq(id))).thenReturn(billing);
+
+    final Billing foundBilling = billingBusiness.findBillingById(id);
+
+    verify(billingRepository, only()).findById(eq(id));
+
+    assertThat(foundBilling, not(nullValue()));
+    assertThat(foundBilling, equalTo(billing));
+  }
 
 }
