@@ -81,6 +81,7 @@ public class AddressValidator extends AbstractValidator<Address> {
       .must(not(stringEmptyOrNull()))
         .withCode("405")
         .withMessage("country not provided")
+        .critical()
 
       /**
        * country must match any of the Countries in Country Enum
