@@ -30,6 +30,7 @@ class CustomPredicatesTest {
     assertTrue(hasValidEmail().test("teste@teste.com.123"));
     assertTrue(hasValidEmail().test("123@123.com"));
     assertTrue(hasValidEmail().test("a@a.info"));
+
     assertFalse(hasValidEmail().test("teste@teste"));
     assertFalse(hasValidEmail().test("teste@teste."));
     assertFalse(hasValidEmail().test("teste@teste.com."));
