@@ -26,6 +26,7 @@ class AddressValidatorTest {
     assertThat(validationResult.isValid(), equalTo(true));
   }
 
+
   @Test
   void Should_ReturnValidationFailed_When_AddressLineOneIsEmpty() {
     final Address address = createAddress();
@@ -306,6 +307,27 @@ class AddressValidatorTest {
     assertThat(errors, hasItem(hasProperty("field", equalTo("> zipcode"))));
     assertThat(errors, hasItem(hasProperty("message", equalTo("incorrect zip code format. Only numbers are accepted"))));
     assertThat(errors, hasItem(hasProperty("attemptedValue", equalTo("123456abc"))));
+  }
+
+
+  @Test
+  void Should_ReturnValidationFailedAndNoPrefix_When_AddressLineOneIsEmpty() {
+    final Address address = createAddress();
+    address.setAddressLine1("");
+
+    final AddressValidator noPrefixValidator = new AddressValidator();
+    final ValidationResult validationResult = noPrefixValidator.validate(address);
+
+    assertThat(validationResult, not(nullValue()));
+    assertThat(validationResult.isValid(), equalTo(false));
+
+    final Collection<Error> errors = validationResult.getErrors();
+
+    assertThat(errors, hasSize(1));
+    assertThat(errors, hasItem(hasProperty("code", equalTo("401"))));
+    assertThat(errors, hasItem(hasProperty("field", equalTo("addressLine1"))));
+    assertThat(errors, hasItem(hasProperty("message", equalTo("address line 1 not provided"))));
+    assertThat(errors, hasItem(hasProperty("attemptedValue", equalTo(""))));
   }
 
 }
