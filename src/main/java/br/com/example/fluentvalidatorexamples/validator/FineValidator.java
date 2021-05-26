@@ -31,6 +31,7 @@ class FineValidator extends AbstractValidator<Billing> {
         .withFieldName("fineAmount")
         .withMessage("the minimum value for fine amount is $0.01")
         .withAttempedValue(Billing::getFineAmount)
+        .critical()
 
       /**
        * the maximum value for fine can not be greater or equal the billing balance
