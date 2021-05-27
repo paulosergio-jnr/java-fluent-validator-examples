@@ -34,7 +34,7 @@ public class ReceiverValidator extends AbstractValidator<Receiver> {
        */
       .must(not(stringEmptyOrNull()))
         .withCode("501")
-        .withMessage("receiver's first name must not provided");
+        .withMessage("receiver's first name not provided");
 
     ruleFor("receiver.lastName", Receiver::getLastName)
       /**
@@ -42,7 +42,7 @@ public class ReceiverValidator extends AbstractValidator<Receiver> {
        */
       .must(not(stringEmptyOrNull()))
         .withCode("502")
-        .withMessage("receiver's last name must not provided");
+        .withMessage("receiver's last name not provided");
 
     ruleFor("receiver.birthday", Receiver::getBirthday)
       /**
@@ -50,7 +50,8 @@ public class ReceiverValidator extends AbstractValidator<Receiver> {
        */
       .must(not(nullValue()))
         .withCode("503")
-        .withMessage("receiver's birthday must not provided")
+        .withMessage("receiver's birthday not provided")
+        .critical()
 
       /**
        * receiver's age must be at least 21
@@ -59,7 +60,7 @@ public class ReceiverValidator extends AbstractValidator<Receiver> {
         .withCode("504")
         .withMessage("receiver's age must be at least 21");
 
-    ruleFor("receiver.e-mail", Receiver::getEmail)
+    ruleFor("receiver.email", Receiver::getEmail)
       /**
        * receiver's e-mail must be provided and follow the pattern: 'e-mail@provider.extension'
        * hasValidEmail() predicate also checks for null and blank string
