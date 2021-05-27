@@ -51,6 +51,7 @@ public class PayerValidator extends AbstractValidator<Payer> {
       .must(not(nullValue()))
         .withCode("303")
         .withMessage("payer's birthday not provided")
+        .critical()
 
       /**
        * payer's age must be at least 18
@@ -59,7 +60,7 @@ public class PayerValidator extends AbstractValidator<Payer> {
         .withCode("304")
         .withMessage("payer's age must be at least 18");
 
-    ruleFor("payer.e-mail", Payer::getEmail)
+    ruleFor("payer.email", Payer::getEmail)
       /**
        * payer's e-mail must be provided and follow the pattern: 'e-mail@provider.extension'
        * hasValidEmail() predicate also checks for null and blank string
