@@ -4,7 +4,7 @@ import br.com.example.fluentvalidatorexamples.domain.Billing;
 import br.com.example.fluentvalidatorexamples.exception.BillingNotFoundException;
 import br.com.example.fluentvalidatorexamples.exception.BillingValidationException;
 import br.com.example.fluentvalidatorexamples.repository.BillingRepository;
-import br.com.example.fluentvalidatorexamples.validator.BillingValitador;
+import br.com.example.fluentvalidatorexamples.validator.BillingValidator;
 import br.com.fluentvalidator.context.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ public class BillingBusiness {
   private static final Logger LOGGER = LoggerFactory.getLogger(BillingBusiness.class);
 
   @Autowired
-  private BillingValitador billingValitador;
+  private BillingValidator billingValidator;
 
   @Autowired
   private BillingRepository billingRepository;
@@ -28,7 +28,7 @@ public class BillingBusiness {
   public Billing save(final Billing billing) throws BillingValidationException {
     LOGGER.info("starting billing validations");
 
-    final ValidationResult validationResult = billingValitador.validate(billing);
+    final ValidationResult validationResult = billingValidator.validate(billing);
 
     if (!validationResult.isValid()) {
       // once the billing parameters does not pass on validation, stop the save process
@@ -53,7 +53,7 @@ public class BillingBusiness {
   public Billing update(final Billing billing) throws BillingValidationException, BillingNotFoundException {
     LOGGER.info("starting billing validations");
 
-    final ValidationResult validationResult = billingValitador.validate(billing);
+    final ValidationResult validationResult = billingValidator.validate(billing);
 
     if (!validationResult.isValid()) {
       // once the billing parameters does not pass on validation, stop the save process

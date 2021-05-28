@@ -16,7 +16,7 @@ import static br.com.fluentvalidator.predicate.LogicalPredicate.*;
 import static br.com.fluentvalidator.predicate.ObjectPredicate.nullValue;
 
 @Component
-public class BillingValitador extends AbstractValidator<Billing> {
+public class BillingValidator extends AbstractValidator<Billing> {
 
   private static final BigDecimal MAX_BALANCE = new BigDecimal("999999.99");
   private static final BigDecimal MIN_BALANCE = new BigDecimal("1.00");

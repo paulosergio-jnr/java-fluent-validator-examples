@@ -4,7 +4,7 @@ import br.com.example.fluentvalidatorexamples.domain.Billing;
 import br.com.example.fluentvalidatorexamples.exception.BillingNotFoundException;
 import br.com.example.fluentvalidatorexamples.exception.BillingValidationException;
 import br.com.example.fluentvalidatorexamples.repository.BillingRepository;
-import br.com.example.fluentvalidatorexamples.validator.BillingValitador;
+import br.com.example.fluentvalidatorexamples.validator.BillingValidator;
 import br.com.fluentvalidator.context.Error;
 import br.com.fluentvalidator.context.ValidationResult;
 import ch.qos.logback.classic.Level;
@@ -34,7 +34,7 @@ class BillingBusinessTest {
   private ArgumentCaptor<LoggingEvent> loggingEventCaptor;
 
   @Mock
-  private BillingValitador billingValitador;
+  private BillingValidator billingValidator;
 
   @Mock
   private BillingRepository billingRepository;
@@ -56,7 +56,7 @@ class BillingBusinessTest {
 
     final Billing savedBilling = createBilling();
 
-    when(billingValitador.validate(eq(billing))).thenReturn(ValidationResult.ok());
+    when(billingValidator.validate(eq(billing))).thenReturn(ValidationResult.ok());
     when(billingRepository.save(eq(billing))).thenReturn(savedBilling);
 
     final Billing returnedBilling = billingBusiness.save(billing);
@@ -85,7 +85,7 @@ class BillingBusinessTest {
     final ArrayList<Error> errors = new ArrayList<>();
     errors.add(error);
 
-    when(billingValitador.validate(eq(billing))).thenReturn(ValidationResult.fail(errors));
+    when(billingValidator.validate(eq(billing))).thenReturn(ValidationResult.fail(errors));
     when(billingRepository.save(eq(billing))).thenReturn(savedBilling);
 
     final BillingValidationException exception = catchThrowableOfType(() -> billingBusiness.save(billing), BillingValidationException.class);
@@ -110,7 +110,7 @@ class BillingBusinessTest {
 
     final Billing savedBilling = createBilling();
 
-    when(billingValitador.validate(eq(billing))).thenReturn(ValidationResult.ok());
+    when(billingValidator.validate(eq(billing))).thenReturn(ValidationResult.ok());
     when(billingRepository.update(eq(billing))).thenReturn(savedBilling);
 
     final Billing returnedBilling = billingBusiness.update(billing);
@@ -139,7 +139,7 @@ class BillingBusinessTest {
     final ArrayList<Error> errors = new ArrayList<>();
     errors.add(error);
 
-    when(billingValitador.validate(eq(billing))).thenReturn(ValidationResult.fail(errors));
+    when(billingValidator.validate(eq(billing))).thenReturn(ValidationResult.fail(errors));
     when(billingRepository.update(eq(billing))).thenReturn(savedBilling);
 
     final BillingValidationException exception = catchThrowableOfType(() -> billingBusiness.update(billing), BillingValidationException.class);
@@ -161,7 +161,7 @@ class BillingBusinessTest {
   void Should_ThrowException_When_TryingToUpdateAnNonExistingBilling() throws BillingNotFoundException {
     final Billing billing = createBilling();
 
-    when(billingValitador.validate(eq(billing))).thenReturn(ValidationResult.ok());
+    when(billingValidator.validate(eq(billing))).thenReturn(ValidationResult.ok());
     when(billingRepository.update(eq(billing))).thenThrow(new BillingNotFoundException());
 
     final BillingNotFoundException exception = catchThrowableOfType(() -> billingBusiness.update(billing), BillingNotFoundException.class);
