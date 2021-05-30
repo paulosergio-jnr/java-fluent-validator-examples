@@ -68,7 +68,7 @@ public class BillingValidator extends AbstractValidator<Billing> {
      * - it can not be a past date
      * - it can not be more than 1 year further
      */
-    ruleFor(Billing::getDueDate)
+    ruleFor("dueDate", Billing::getDueDate)
       /**
        * this field is mandatory, and must not be null
        * if this fails, it might not continue with the validation for this field
@@ -76,9 +76,7 @@ public class BillingValidator extends AbstractValidator<Billing> {
        */
       .must(not(nullValue()))
         .withCode("104")
-        .withFieldName("dueDate")
         .withMessage("due date not provided")
-        .withAttempedValue(Billing::getDueDate)
         .critical()
 
       /**
@@ -86,18 +84,14 @@ public class BillingValidator extends AbstractValidator<Billing> {
        */
       .must(localDateAfterOrEqualToday())
         .withCode("105")
-        .withFieldName("dueDate")
         .withMessage("due date must be equal of after today")
-        .withAttempedValue(Billing::getDueDate)
 
       /**
        * due date must not the set to more than one year further the current date
        */
       .must(localDateBeforeOrEqual(LocalDate.now().plusYears(1)))
         .withCode("106")
-        .withFieldName("dueDate")
-        .withMessage("due date must not the set to more than one year further the current date")
-        .withAttempedValue(Billing::getDueDate);
+        .withMessage("due date must not the set to more than one year further the current date");
 
     /**
      * rules for past payments:
@@ -144,7 +138,7 @@ public class BillingValidator extends AbstractValidator<Billing> {
        * whenever past payment is accepted
        */
       .must(localDateAfter(Billing::getExpirationDate, Billing::getDueDate))
-      .when(isTrue(Billing::getAcceptPastPayment))
+      .when(isTrue(Billing::getAcceptPastPayment).and(not(nullValue(Billing::getDueDate))))
         .withCode("110")
         .withFieldName("expirationDate")
         .withMessage("expiration date must be further due date")
@@ -155,7 +149,7 @@ public class BillingValidator extends AbstractValidator<Billing> {
        * whenever past payment is accepted
        */
       .must(localDateBeforeOrEqual(Billing::getExpirationDate, plusMonths(Billing::getDueDate, 6)))
-      .when(isTrue(Billing::getAcceptPastPayment))
+      .when(isTrue(Billing::getAcceptPastPayment).and(not(nullValue(Billing::getDueDate))))
         .withCode("111")
         .withFieldName("expirationDate")
         .withMessage("expiration date must be set to more than 6 months past due date")
@@ -167,12 +161,12 @@ public class BillingValidator extends AbstractValidator<Billing> {
      * - whenever fine is applicable, fine rules can be applied
      * for this purpose, a exclusive validator for fine rules is created
      */
-    ruleFor(billing -> billing)
+    ruleFor("applyFineForPastPayment", billing -> billing)
       .must(not(nullValue(Billing::getApplyFineForPastPayment)))
         .withCode("112")
-        .withFieldName("applyFineForPastPayment")
         .withMessage("flag 'apply fine for past payment' not provided")
         .withAttempedValue(Billing::getApplyFineForPastPayment)
+        .critical()
 
       .whenever(isTrue(Billing::getAcceptPastPayment))
       .withValidator(new FineValidator());
@@ -191,6 +185,7 @@ public class BillingValidator extends AbstractValidator<Billing> {
         .withFieldName("payer")
         .withMessage("payer not provided")
         .withAttempedValue(Billing::getPayer)
+        .critical()
 
       /**
        * validate payer with proper rules
@@ -211,7 +206,8 @@ public class BillingValidator extends AbstractValidator<Billing> {
         .withCode("114")
         .withFieldName("receiver")
         .withMessage("receiver not provided")
-        .withAttempedValue(Billing::getPayer)
+        .withAttempedValue(Billing::getReceiver)
+        .critical()
 
       /**
        * validate receiver with proper rules
@@ -225,21 +221,19 @@ public class BillingValidator extends AbstractValidator<Billing> {
      * - if additional info is provided, the list must not be empty
      * - for each item in the list, use and exclusive validator
      */
-    ruleFor(Billing::getAdditionalInfo)
+    ruleForEach("additionalInfo", Billing::getAdditionalInfo)
       /**
        * if additional info list is provided, it must not be empty
        */
       .must(not(empty()))
       .when(not(nullValue()))
         .withCode("115")
-        .withFieldName("additionalInfo")
         .withMessage("additional info list must not be empty")
-        .withAttempedValue(Billing::getAdditionalInfo);
+        .withAttempedValue(Billing::getAdditionalInfo)
 
-    /**
-     * for each item on additional info list, apply a proper validator
-     */
-    ruleForEach(Billing::getAdditionalInfo)
+      /**
+       * for each item on additional info list, apply a proper validator
+       */
       .whenever(not(nullValue()))
       .withValidator(new AdditionalInfoValidator());
 
