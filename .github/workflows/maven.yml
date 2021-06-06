@@ -23,6 +23,7 @@ jobs:
         uses: actions/setup-java@v2.1.0
         with: 
           java-version: ${{ matrix.java-version }}
+          distribution: jdk
           
       - name: Maven compilation
         run: mvn -T 1C clean generate-sources compile --file pom.xml
