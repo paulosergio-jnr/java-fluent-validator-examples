@@ -51,6 +51,7 @@ jobs:
   analisys:
     runs-on: ubuntu-latest
     needs: [build, test]
+    environment: SonarCloud
     
     steps:
       - name: SonarCloud analisys
