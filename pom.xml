@@ -18,6 +18,10 @@
 
   <properties>
     <java.version>11</java.version>
+           
+    <sonar.projectKey>paulosergio-jnr_java-fluent-validator-examples</sonar.projectKey>
+    <sonar.organization>paulosergio-jnr</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
   </properties>
 
   <dependencies>
