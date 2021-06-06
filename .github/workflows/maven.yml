@@ -59,4 +59,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         uses: SonarSource/sonarcloud-github-action@v1.6
+        with:
+          args: >
+            -Dsonar.organization=paulosergio-jnr
+            -Dsonar.projectKey=paulosergio-jnr_java-fluent-validator-examples
 
