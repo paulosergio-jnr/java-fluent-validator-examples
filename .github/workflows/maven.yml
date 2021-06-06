@@ -43,6 +43,7 @@ jobs:
         uses: actions/setup-java@v2.1.0
         with: 
           java-version: ${{ matrix.java-version }}
+          distribution: adopt
           
       - name: Maven tests
         run: mvn -T 1C test-compile test --file pom.xml
