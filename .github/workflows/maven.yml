@@ -17,7 +17,8 @@ jobs:
         java-version: [ 11, 15 ]
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Code Checkout
+        uses: actions/checkout@v2
       
       - name: Setup JDK
         uses: actions/setup-java@v2.1.0
@@ -37,7 +38,8 @@ jobs:
         java-version: [ 11, 15 ]
         
     steps:
-      - uses: actions/checkout@v2
+      - name: Code Checkout
+        uses: actions/checkout@v2
       
       - name: Setup JDK for tests
         uses: actions/setup-java@v2.1.0
@@ -48,14 +50,27 @@ jobs:
       - name: Maven tests
         run: mvn -T 1C test-compile test --file pom.xml
 
-  analisys:
+  SonarCloud Analysis:
     runs-on: ubuntu-latest
     needs: [build, test]
     environment: SonarCloud
     
     steps:
+      - name: Code Checkout
+        uses: actions/checkout@v2
+      
+      - name: Setup JDK for tests
+        uses: actions/setup-java@v2.1.0
+        with: 
+          java-version: 11
+          distribution: adopt
+    
       - name: SonarCloud analisys
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn clean test jacoco:report org.jacoco:jacoco-maven-plugin:prepare-agent sonar:sonar -Dsonar.projectKey=paulosergio-jnr_java-fluent-validator-examples -Dsonar.organization=paulosergio-jnr -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
+        uses: SonarSource/sonarcloud-github-action@v1.6
+        with:
+          args: >
+            -Dsonar.organization=paulosergio-jnr
+            -Dsonar.projectKey=paulosergio-jnr_java-fluent-validator-examples
